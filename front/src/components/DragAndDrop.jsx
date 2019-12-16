@@ -1,57 +1,59 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 
-class DragAndDrop extends Component {
-    state = {
-        drag: false
-    }
-    dropRef = React.createRef()
-    handleDrag = (e) => {
+const DragAndDrop = (props) => {
+    const [drag, setDrag] = useState(false)
+    const [dragCounter, setDragCounter] = useState(0)
+    const dropRef = React.createRef()
+    
+
+    const handleDrag = (e) => {
         e.preventDefault()
         e.stopPropagation()
     }
-    handleDragIn = (e) => {
+
+    const handleDragIn = (e) => {
         e.preventDefault()
         e.stopPropagation()
-        this.dragCounter++
+        setDragCounter(dragCounter++)
         if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
-            this.setState({ drag: true })
+            setDrag(true)
         }
     }
-    handleDragOut = (e) => {
+    const handleDragOut = (e) => {
         e.preventDefault()
         e.stopPropagation()
-        this.dragCounter--
+        setDragCounter(dragCounter--)
         if (this.dragCounter === 0) {
-            this.setState({ drag: false })
+            setDrag(false)
         }
     }
-    handleDrop = (e) => {
+    const handleDrop = (e) => {
         e.preventDefault()
         e.stopPropagation()
-        this.setState({ drag: false })
+        setDrag(false)
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            this.props.handleDrop(e.dataTransfer.files)
+            props.handleDrop(e.dataTransfer.files)
             e.dataTransfer.clearData()
-            this.dragCounter = 0
+            setDragCounter(0)
         }
     }
-    componentDidMount() {
-        let div = this.dropRef.current
-        div.addEventListener('dragenter', this.handleDragIn)
-        div.addEventListener('dragleave', this.handleDragOut)
-        div.addEventListener('dragover', this.handleDrag)
-        div.addEventListener('drop', this.handleDrop)
-    }
-    componentWillUnmount() {
-        let div = this.dropRef.current
-        div.removeEventListener('dragenter', this.handleDragIn)
-        div.removeEventListener('dragleave', this.handleDragOut)
-        div.removeEventListener('dragover', this.handleDrag)
-        div.removeEventListener('drop', this.handleDrop)
-    }
-    render() {
+    useEffect(() => {
+        let div = dropRef.current
+        div.addEventListener('dragenter', handleDragIn)
+        div.addEventListener('dragleave', handleDragOut)
+        div.addEventListener('dragover', handleDrag)
+        div.addEventListener('drop', handleDrop)
+    })
+    useEffect(() => {
+        let div = dropRef.current
+        div.removeEventListener('dragenter', handleDragIn)
+        div.removeEventListener('dragleave', handleDragOut)
+        div.removeEventListener('dragover', handleDrag)
+        div.removeEventListener('drop', handleDrop)
+    })
+   
         return (
-            <div className="drag-drop-container" ref={this.dropRef}>
+            <div className="drag-drop-container" ref={dropRef}>
                 <div className="drag-drop-input">
                     <div className="drag-drop-input py-5">
                         <div className="text-center my-3">Drop your bullshits here...</div>
@@ -62,9 +64,9 @@ class DragAndDrop extends Component {
                         </div>
                     </div>
                 </div>
-                {this.props.children}
+                {props.children}
             </div>
         )
-    }
+    
 }
 export default DragAndDrop

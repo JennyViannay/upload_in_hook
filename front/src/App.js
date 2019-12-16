@@ -1,12 +1,12 @@
 import React from 'react';
 import './style.css'
-import UploadFile from './components/UploadFile';
+import UploadForm from './components/UploadForm';
 
-function App() {
+const App = () => {
   return (
     <div className="App">
       <div className="container my-5">
-        <UploadFile />
+        <UploadForm />
       </div>
     </div>
   );
